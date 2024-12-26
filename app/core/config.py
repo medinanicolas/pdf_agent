@@ -1,5 +1,5 @@
 import os
-from pydantic import BaseModel, SecretStr
+from pydantic import BaseModel
 
 class Settings(BaseModel):
     APP_BASE_DIR: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")

@@ -9,7 +9,7 @@ from app.core.database.neo4j import get_neo4j_graph
 router = APIRouter()
 
 @router.post('/upload')
-def upload_document(
+async def upload_document(
     file: UploadFile = File(...),
     ):
     try:
@@ -22,9 +22,8 @@ def upload_document(
         file_hash = hashlib.sha256()
         with open(file_path, 'wb') as file_buffer:
             shutil.copyfileobj(file.file, file_buffer)
-        with open(file_path, 'rb') as f:
             while True:
-                chunk = f.read(1024)
+                chunk = await file.read(1024)  # Read in chunks of 1024 bytes
                 if not chunk:
                     break
                 file_hash.update(chunk)
@@ -72,7 +71,7 @@ def upload_document(
             graphdb.query(
                 '''
                 MERGE (c:Chunk {chunkId: $chunk_id}) ON CREATE SET c.text = $chunk
-                WITH c MATCH (d:Document {documentId: $document_id}) MERGE (c)-[:HAS_CHUNK]-(d)
+                WITH c MATCH (d:Document {documentId: $document_id}) MERGE (d)-[:HAS_CHUNK]-(c)
                 ''',
                 params={
                     'document_id': document_id, 
@@ -81,20 +80,18 @@ def upload_document(
                 }
             )
         
-        graphdb.query(
-            '''
+            graphdb.query("""
             MATCH (d:Document {documentId: $document_id})-[:HAS_CHUNK]->(chunk:Chunk) WHERE chunk.textEmbedding IS NULL
             WITH chunk, genai.vector.encode(
-                chunk.text,
-                "OpenAI",
-                {
-                    token: $openAiApiKey,
-                    model: $openAiEmbeddingModel,
-                    endpoint: $openAiEndpoint
-                }
-            ) AS vector
+            chunk.text, 
+            "OpenAI", 
+            {
+                token: $openAiApiKey,
+                model: $openAiEmbeddingModel,
+                endpoint: $openAiEndpoint
+            }) AS vector
             CALL db.create.setNodeVectorProperty(chunk, "textEmbedding", vector)
-            ''',
+            """, 
             params={
                 'document_id': document_id,
                 'openAiApiKey': settings.OPENAI_API_KEY,
