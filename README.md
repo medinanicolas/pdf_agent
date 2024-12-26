@@ -7,6 +7,10 @@ Este agente está pensado para analizar archivos de texto en PDF. ¡Sube tu arch
 
 Se utilizan embeddings para medir la similitud semántica entre las piezas de texto del archivo, dividiéndolas en partes que servirán luego de contexto para el LLM. Las piezas de información resultantes son convertidas a embeddings para almacenarse e indexarse en la base de datos de grafos, la cual permite construir grafos de conocimiento. Se utiliza un mecanismo RAG (Retrieval Augmented Generation) para encontrar los pedazos de información más relevantes y verificar si son útiles para elaborar una respuesta. Dependiendo del criterio del LLM, se formulará una respuesta en base al contexto o, de lo contrario, con conocimiento propio. Finalmente, se verifica que la respuesta no caiga en alucinaciones.
 
+<div style="text-align:center">
+<img src="./resources/graph_image.png">
+</div>
+
 El agente es bastante estricto en determinar qué se puede responder con el contexto dado y qué no, por lo que la pregunta debe estar bien formulada. Esto puede solucionarse facilmente con Query Transformation.
 
 ## Instalación
