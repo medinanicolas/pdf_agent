@@ -1,0 +1,60 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app
+    ports:
+      - "8000:8000"
+    env_file: 
+      - .env.app-dev
+    volumes:
+      - .:/agent
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    restart: always
+    command: "fastapi dev app/main.py --host 0.0.0.0"
+
+  neo4j:
+    image: neo4j
+    container_name: neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    env_file: 
+      - .env.app-dev
+    volumes:
+      - ./neo4j/data:/data
+      - ./neo4j/plugins:/plugins
+      - /neo4j/config:/config
+    secrets:
+      - neo4j_auth_file
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell", "-u", "$NEO4J_USERNAME", "-p", "$NEO4J_PASSWORD", "RETURN 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+
+
+  streamlit:
+    image: python:3.9-slim
+    container_name: streamlit
+    command: >
+      bash -c "apt-get update && 
+      apt-get install -y build-essential curl software-properties-common git &&
+      pip install streamlit &&
+      streamlit run /app/streamlit/main.py --server.port=8501 --server.address=0.0.0.0"
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+
+
+secrets:
+  neo4j_auth_file:
+    file: ./neo4j_auth.txt

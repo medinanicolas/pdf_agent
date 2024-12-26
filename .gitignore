@@ -1,0 +1,64 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.pyo
+*.pyd
+*.sqlite3
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# FastAPI
+*.log
+*.db
+*.sqlite
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Operating System
+.DS_Store
+Thumbs.db
+
+# Pytest
+.cache/
+*.coverage
+*.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# TypeScript and Node.js (if applicable)
+node_modules/
+*.log
+
+# Docker
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Environment variables
+.env*
+*.old
+docs/
+certs/
+data/
+plugins/
+research/
+uploads/
+neo4j/
+
+                  
