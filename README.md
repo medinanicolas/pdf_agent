@@ -27,6 +27,29 @@ docker compose -f docker-compose-dev.yml up --build
 ```
 4. Jugar. Una vez que el proceso haya terminado, y si todo sale bien, podrás ingresar a Streamlit en `http://localhost:8501/` y empezar a probar el agente. Sube tu archivo y hazle preguntas 🤩.
 
+## Uso
+
+El uso del agente es sencillo.
+
+Solo empieza con un par de preguntas y notaras que esta reacio a contestar sin mayor contexto.
+
+<img src="./resources/Screenshot_20241226_154430.png">
+
+
+Sube un archivo con el contexto necesario y vuelve a preguntar.
+
+Yo use [este](./resources/falabella_garantia_extendida.pdf) de ejemplo.
+
+<img src="./resources/Screenshot_20241226_155258.png">
+
+<img src="./resources/Screenshot_20241226_154608.png">
+
+
+Haz preguntas para probar la memoria del agente.
+
+<img src="./resources/Screenshot_20241226_154719.png">
+
+
 ## Recursos
 
-* [RAG Notebook](RAG.ipynb)
+* [RAG Notebook](./resources/RAG.ipynb)
