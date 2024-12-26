@@ -16,7 +16,7 @@ class Settings(BaseModel):
     VECTOR_SOURCE_PROPERTY: str = 'text'
     VECTOR_EMBEDDING_PROPERTY: str = 'textEmbedding'
 
-    OPENAI_API_KEY: SecretStr = SecretStr(os.getenv("OPENAI_API_KEY", ""))
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
     OPENAI_CHAT_MODEL: str = "gpt-4o-mini"
     OPENAI_EMBEDDINGS_URI: str = "https://api.openai.com/v1/embeddings"
     OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"

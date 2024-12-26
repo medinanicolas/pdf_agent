@@ -51,7 +51,7 @@ docker-compose.override.yml
 docker-compose.local.yml
 
 # Environment variables
-.env*
+.*.app*
 *.old
 docs/
 certs/
