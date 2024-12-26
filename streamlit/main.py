@@ -2,8 +2,8 @@ import streamlit as st
 import requests
 
 # Local FastAPI server URL for file upload and document listing
-UPLOAD_URL = "http://neo4j:8000/api/v1/document/upload"
-LIST_DOCUMENTS_URL = "http://neo4j:8000/api/v1/document"
+UPLOAD_URL = "http://backend:8000/api/v1/document/upload"
+LIST_DOCUMENTS_URL = "http://backend:8000/api/v1/document"
 
 with st.sidebar:
     "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
@@ -45,3 +45,40 @@ with st.sidebar:
             st.write("No files found in the database.")
     except requests.exceptions.RequestException as e:
         st.sidebar.error(f"An error occurred while fetching the file list: {e}")
+
+st.title("💬 Chatbot")
+st.caption("🚀 A Streamlit chatbot powered by OpenAI")
+if "messages" not in st.session_state:
+    st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
+
+for msg in st.session_state.messages:
+    st.chat_message(msg["role"]).write(msg["content"])
+
+try:
+    if prompt := st.chat_input():
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        st.chat_message("user").write(prompt)
+    # Realizar la solicitud POST para obtener el flujo de datos
+        response = requests.post(
+            'http://backend:8000/api/v1/messages/chat',
+            json={"message": prompt},
+            stream=True  # Habilitar el streaming de la respuesta
+        )
+        response.raise_for_status()  # Generar excepción en caso de errores HTTP
+
+        # Procesar cada token del flujo de la respuesta
+        for token in response.iter_lines():
+            if token:
+                decoded_token = token.decode('utf-8')
+                
+                # Mostrar el token como un mensaje del asistente en Streamlit
+                st.chat_message("assistant").write(decoded_token)
+                
+                # Guardar el mensaje en el estado de la sesión
+                if "messages" not in st.session_state:
+                    st.session_state.messages = []
+                st.session_state.messages.append({"role": "assistant", "content": decoded_token})
+
+except requests.exceptions.RequestException as e:
+    # Manejar excepciones en la solicitud HTTP
+    st.error(f"An error occurred: {e}")
